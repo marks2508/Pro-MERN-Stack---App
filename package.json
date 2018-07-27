@@ -1,0 +1,29 @@
+{
+  "name": "pro-mern-stack-application",
+  "version": "1.0.0",
+  "description": "Building the app in the book",
+  "main": "index.js",
+  "scripts": {
+    "compile": "babel src --presets react,es2015 --out-dir static",
+    "watch": "babel src --presets react,es2015 --out-dir static --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marks2508/Pro-MERN-Stack---App.git"
+  },
+  "author": "Mark Scicluna",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marks2508/Pro-MERN-Stack---App/issues"
+  },
+  "homepage": "https://github.com/marks2508/Pro-MERN-Stack---App#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1"
+  }
+}
