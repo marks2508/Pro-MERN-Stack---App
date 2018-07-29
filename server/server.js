@@ -1,8 +1,11 @@
-'use strict';
+import SourceMapSupport from 'source-map-support';
+SourceMapSupport.install();
+import 'babel-polyfill';
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const MongoClient = require('mongodb').MongoClient;
+import express from 'express';
+import bodyParser from 'body-parser';
+import { MongoClient } from 'mongodb';
+import Issue from './issue.js';
 
 const app = express();
 app.use(express.static('static'));
@@ -18,55 +21,25 @@ app.get('/api/issues', (req, res) => {
   });
 });
 
-const validIssueStatus = {
-  New: true,
-  Open: true,
-  Assigned: true,
-  Fixed: true,
-  Verified: true,
-  Closed: true
-};
-
-const issueFieldType = {
-  status: 'required',
-  owner: 'required',
-  effort: 'optional',
-  created: 'required',
-  completionDate: 'optional',
-  title: 'required'
-};
-
-function validateIssue(issue) {
-  for (const field in issueFieldType) {
-    const type = issueFieldType[field];
-    if (!type) {
-      delete issue[field];
-    } else if (type === 'required' && !issue[field]) {
-      return `${field} is required.`;
-    }
-  }
-  if(!validIssueStatus[issue.status])
-    return `${issue.status} is not a valid status.`;
-  return null;
-}
-
 app.post('/api/issues', (req, res) => {
   const newIssue = req.body;
   newIssue.created = new Date();
   if (!newIssue.status)
     newIssue.status = 'New';
-  const err = validateIssue(newIssue);
+
+  const err = Issue.validateIssue(newIssue);
   if (err) {
     res.status(422).json({ message: `Invalid request: ${err}` });
     return;
   }
+
   db.collection('issues').insertOne(newIssue).then(result =>
     db.collection('issues').find({ _id: result.insertedId }).limit(1).next()
   ).then(newIssue => {
     res.json(newIssue);
   }).catch(error => {
     console.log(error);
-    res.status(500).json({ message: `Internal Server Error: ${error}`});
+    res.status(500).json({ message: `Internal Server Error: ${error}` });
   });
 });
 
